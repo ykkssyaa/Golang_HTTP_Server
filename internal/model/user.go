@@ -12,5 +12,5 @@ type User struct {
 	Patronymic string `json:"patronymic"`
 	Age        int    `json:"age"`
 	Gender     gender `json:"gender"`
-	Country    string
+	Country    string `json:"country"`
 }
