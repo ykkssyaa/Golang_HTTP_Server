@@ -1,6 +1,7 @@
 package gateway
 
 import (
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"testTask/internal/model"
 )
@@ -22,8 +23,26 @@ func (u PostgresUserGatewayImpl) GetUsers(limit, offset int, filter model.UserFi
 }
 
 func (u PostgresUserGatewayImpl) CreateUser(user model.User) (int, error) {
-	//TODO implement me
-	panic("implement me")
+
+	var id int
+
+	createQuery := fmt.Sprintf("INSERT INTO %s "+
+		"(name, surname, patronymic, age, country, gender) "+
+		"VALUES ($1, $2, $3, $4, $5, $6)"+
+		"RETURNING id", usersTable)
+
+	tx, err := u.db.DB.Begin()
+
+	if err != nil {
+		return 0, err
+	}
+	row := tx.QueryRow(createQuery, user.Name, user.Surname, user.Patronymic, user.Age, user.Country, user.Gender)
+	if err := row.Scan(&id); err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	return id, err
 }
 
 func (u PostgresUserGatewayImpl) DeleteUser(id int) error {

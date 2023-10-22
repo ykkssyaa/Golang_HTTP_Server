@@ -1,9 +1,9 @@
 package model
 
-type gender string
+type Gender string
 
-const male gender = "male"
-const female gender = "female"
+const Male Gender = "male"
+const female Gender = "female"
 
 type User struct {
 	Id         int    `json:"-" db:"id"`
@@ -11,6 +11,6 @@ type User struct {
 	Surname    string `json:"surname"`
 	Patronymic string `json:"patronymic"`
 	Age        int    `json:"age"`
-	Gender     gender `json:"gender"`
+	Gender     Gender `json:"Gender"`
 	Country    string `json:"country"`
 }
