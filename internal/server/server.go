@@ -1,17 +1,19 @@
-package handler
+package server
 
 import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"testTask/internal/service"
+	logger2 "testTask/pkg/logger"
 	"time"
 )
 
 type HttpServer struct {
 	services *service.Services
+	logger   logger2.Logger
 }
 
-func NewHttpServer(services *service.Services, addr string) *http.Server {
+func NewHttpServer(services *service.Services, logger logger2.Logger, addr string) *http.Server {
 
 	server := &HttpServer{services: services}
 
@@ -19,7 +21,7 @@ func NewHttpServer(services *service.Services, addr string) *http.Server {
 	r.HandleFunc("/api/user", server.GetUsers).Methods("GET")
 	r.HandleFunc("/api/user", server.CreateUser).Methods("POST")
 	r.HandleFunc("/api/user", server.DeleteUser).Methods("DELETE")
-	r.HandleFunc("api/user", server.UpdateUser).Methods("UPDATE")
+	r.HandleFunc("/api/user", server.UpdateUser).Methods("PATCH")
 
 	return &http.Server{
 		Handler:        r,
