@@ -10,10 +10,10 @@ import (
 
 type HttpServer struct {
 	services *service.Services
-	logger   logger2.Logger
+	logger   *logger2.Logger
 }
 
-func NewHttpServer(services *service.Services, logger logger2.Logger, addr string) *http.Server {
+func NewHttpServer(services *service.Services, logger *logger2.Logger, addr string) *http.Server {
 
 	server := &HttpServer{services: services, logger: logger}
 

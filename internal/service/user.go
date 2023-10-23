@@ -3,6 +3,7 @@ package service
 import (
 	"testTask/internal/gateway"
 	"testTask/internal/model"
+	logger2 "testTask/pkg/logger"
 )
 
 type UserService interface {
@@ -13,13 +14,13 @@ type UserService interface {
 }
 
 type UserServiceImpl struct {
-	repo gateway.PostgresUserGateway
-	api  gateway.UserThirdPartyApi
+	repo   gateway.PostgresUserGateway
+	api    gateway.UserThirdPartyApi
+	logger *logger2.Logger
 }
 
 func (u UserServiceImpl) GetUsers(limit, offset int, filter model.UserFilter) ([]model.User, error) {
-	//TODO implement me
-	panic("implement me")
+	return u.repo.GetUsers(limit, offset, filter)
 }
 
 func (u UserServiceImpl) CreateUser(user model.User) (model.User, error) {

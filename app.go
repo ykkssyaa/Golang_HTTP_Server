@@ -28,10 +28,10 @@ func main() {
 	}
 
 	logger.Info.Print("Creating Gateways.")
-	gateways := gateway.NewGateway(db)
+	gateways := gateway.NewGateway(db, logger)
 
 	logger.Info.Print("Creating Services.")
-	services := service.NewService(gateways)
+	services := service.NewService(gateways, logger)
 
 	logger.Info.Print("Creating server.")
 

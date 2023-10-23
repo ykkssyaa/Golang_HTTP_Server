@@ -3,6 +3,7 @@ package gateway
 import (
 	"encoding/json"
 	"net/http"
+	logger2 "testTask/pkg/logger"
 )
 
 type CountryProbability struct {
@@ -24,6 +25,7 @@ type UserThirdPartyApi interface {
 
 type UserThirdPartyApiImpl struct {
 	client *http.Client
+	logger *logger2.Logger
 }
 
 func (u UserThirdPartyApiImpl) getJson(url string, target interface{}) error {
@@ -42,6 +44,8 @@ type AgifyJSON struct {
 }
 
 func (u UserThirdPartyApiImpl) GetAge(name string) (int, error) {
+
+	u.logger.Info.Println("Getting Age of ", name)
 	res := AgifyJSON{}
 
 	err := u.getJson(agify+name, &res)
@@ -59,6 +63,8 @@ type GenderizeJSON struct {
 }
 
 func (u UserThirdPartyApiImpl) GetGender(name string) (string, error) {
+	u.logger.Info.Println("Getting Gender of ", name)
+
 	res := GenderizeJSON{}
 
 	err := u.getJson(genderize+name, &res)
@@ -76,6 +82,8 @@ type NationalizeJSON struct {
 }
 
 func (u UserThirdPartyApiImpl) GetCountry(name string) ([]CountryProbability, error) {
+	u.logger.Info.Println("Getting Country of ", name)
+
 	res := NationalizeJSON{}
 
 	err := u.getJson(nationalize+name, &res)
