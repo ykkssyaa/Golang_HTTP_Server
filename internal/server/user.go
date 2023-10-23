@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"testTask/internal/model"
@@ -70,6 +71,32 @@ func (h *HttpServer) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func (h *HttpServer) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
+	h.logger.Info.Println("Invoked DeleteUser of Server")
+
+	// Getting id from URL params
+	idStr := r.URL.Query().Get("id")
+	if idStr == "" {
+		h.logger.Err.Println("Empty id parameter: ", idStr)
+		errorResponse(w, "Empty id parameter", http.StatusBadRequest)
+		return
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		h.logger.Err.Println("Invalid id parameter: ", idStr)
+		errorResponse(w, "Invalid id parameter", http.StatusBadRequest)
+		return
+	}
+
+	h.logger.Info.Println("Deleting user with id = ", idStr)
+
+	h.logger.Info.Println("Invoking UserService.DeleteUser")
+	if err := h.services.UserService.DeleteUser(id); err != nil {
+		errorResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	errorResponse(w, fmt.Sprintf("user with id = %d deleted", id), http.StatusOK)
 }
 
 func (h *HttpServer) UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -128,7 +155,7 @@ func (h *HttpServer) GetUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(users)
 
 }

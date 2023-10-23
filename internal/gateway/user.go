@@ -112,12 +112,29 @@ func (u PostgresUserGatewayImpl) CreateUser(user model.User) (int, error) {
 		return 0, err
 	}
 
-	return id, err
+	return id, nil
 }
 
 func (u PostgresUserGatewayImpl) DeleteUser(id int) error {
-	//TODO implement me
-	panic("implement me")
+
+	u.logger.Info.Println("Deleting user from postgres.")
+
+	deleteQuery := fmt.Sprintf("DELETE FROM %s WHERE id = $1", usersTable)
+	u.logger.Info.Println("Query: ", deleteQuery)
+
+	tx, err := u.db.DB.Begin()
+
+	if err != nil {
+		return err
+	}
+	if _, err = tx.Exec(deleteQuery, id); err != nil {
+		return err
+	}
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (u PostgresUserGatewayImpl) UpdateUser(user model.User) error {

@@ -71,8 +71,7 @@ func countryWithMaxProbability(countries []gateway.CountryProbability) string {
 }
 
 func (u UserServiceImpl) DeleteUser(id int) error {
-	//TODO implement me
-	panic("implement me")
+	return u.repo.DeleteUser(id)
 }
 
 func (u UserServiceImpl) UpdateUser(user model.User) error {
