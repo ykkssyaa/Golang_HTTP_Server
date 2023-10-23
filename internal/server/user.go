@@ -92,6 +92,7 @@ func (h *HttpServer) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	h.logger.Info.Println("Invoking UserService.DeleteUser")
 	if err := h.services.UserService.DeleteUser(id); err != nil {
+		h.logger.Err.Println(err.Error())
 		errorResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -100,7 +101,57 @@ func (h *HttpServer) DeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *HttpServer) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	h.logger.Info.Println("Invoked UpdateUser of Server")
 
+	if r.Header.Get("Content-Type") != "application/json" {
+		h.logger.Err.Println("Error: Content Type is not application/json")
+		errorResponse(w, "Content Type is not application/json", http.StatusUnsupportedMediaType)
+		return
+	}
+
+	var user model.User
+	var unmarshalErr *json.UnmarshalTypeError
+
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+
+	h.logger.Info.Println("Decoding json from request body.")
+	err := decoder.Decode(&user)
+
+	if err != nil {
+		h.logger.Err.Println(err.Error())
+		if errors.As(err, &unmarshalErr) {
+			errorResponse(w, "Bad Request. Wrong Type provided for field "+unmarshalErr.Field, http.StatusBadRequest)
+		} else {
+			errorResponse(w, "Bad Request "+err.Error(), http.StatusBadRequest)
+		}
+		return
+	}
+
+	h.logger.Info.Println("Request body: ", user)
+
+	if user.Id == 0 {
+		h.logger.Err.Println("id is empty")
+		errorResponse(w, "id is empty", http.StatusBadRequest)
+		return
+	}
+
+	if user.Name == "" && user.Surname == "" && user.Patronymic == "" &&
+		user.Country == "" && user.Gender == "" && user.Age == 0 {
+		h.logger.Err.Println("all fields to update are empty")
+		errorResponse(w, "all fields to update are empty", http.StatusBadRequest)
+		return
+	}
+
+	h.logger.Info.Println("Invoking UserService.UpdateUser")
+
+	if err := h.services.UserService.UpdateUser(user); err != nil {
+		h.logger.Err.Println(err.Error())
+		errorResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	errorResponse(w, fmt.Sprintf("user with id = %d updated", user.Id), http.StatusOK)
 }
 
 func (h *HttpServer) GetUsers(w http.ResponseWriter, r *http.Request) {

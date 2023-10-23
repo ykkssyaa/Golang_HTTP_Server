@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"testTask/internal/gateway"
 	"testTask/internal/model"
 	logger2 "testTask/pkg/logger"
@@ -75,6 +76,10 @@ func (u UserServiceImpl) DeleteUser(id int) error {
 }
 
 func (u UserServiceImpl) UpdateUser(user model.User) error {
-	//TODO implement me
-	panic("implement me")
+
+	if user.Age < 0 {
+		return errors.New("invalid age")
+	}
+
+	return u.repo.UpdateUser(user)
 }

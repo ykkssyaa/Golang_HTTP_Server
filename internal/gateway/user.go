@@ -117,6 +117,8 @@ func (u PostgresUserGatewayImpl) CreateUser(user model.User) (int, error) {
 
 func (u PostgresUserGatewayImpl) DeleteUser(id int) error {
 
+	// TODO: check if exists
+
 	u.logger.Info.Println("Deleting user from postgres.")
 
 	deleteQuery := fmt.Sprintf("DELETE FROM %s WHERE id = $1", usersTable)
@@ -138,6 +140,81 @@ func (u PostgresUserGatewayImpl) DeleteUser(id int) error {
 }
 
 func (u PostgresUserGatewayImpl) UpdateUser(user model.User) error {
-	//TODO implement me
-	panic("implement me")
+
+	u.logger.Info.Println("Deleting user from postgres.")
+
+	UpdateQuery, args := UpdateQueryBuilder(user)
+	u.logger.Info.Println("Query: ", UpdateQuery)
+
+	tx, err := u.db.DB.Begin()
+
+	if err != nil {
+		return err
+	}
+	if _, err = tx.Exec(UpdateQuery, args...); err != nil {
+		return err
+	}
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func UpdateQueryBuilder(user model.User) (query string, args []interface{}) {
+
+	query = fmt.Sprintf("UPDATE %s SET ", usersTable)
+
+	i := 1
+	if user.Name != "" {
+		query += fmt.Sprintf(" name = $%d", i)
+		args = append(args, user.Name)
+		i++
+	}
+	if user.Surname != "" {
+		if i > 1 {
+			query += ","
+		}
+		query += fmt.Sprintf(" surname = $%d", i)
+		args = append(args, user.Surname)
+		i++
+	}
+	if user.Patronymic != "" {
+		if i > 1 {
+			query += ","
+		}
+		query += fmt.Sprintf(" patronymic = $%d", i)
+		args = append(args, user.Patronymic)
+		i++
+	}
+	if user.Country != "" {
+		if i > 1 {
+			query += ","
+		}
+		query += fmt.Sprintf(" country = $%d", i)
+		args = append(args, user.Country)
+		i++
+	}
+	if user.Gender != "" {
+		if i > 1 {
+			query += ","
+		}
+		query += fmt.Sprintf(" gender = $%d", i)
+		args = append(args, user.Gender)
+		i++
+	}
+	if user.Age != 0 {
+		if i > 1 {
+			query += ","
+		}
+		query += fmt.Sprintf(" age = $%d", i)
+		args = append(args, user.Age)
+		i++
+	}
+
+	query += fmt.Sprintf(" WHERE id = $%d", i)
+	args = append(args, user.Id)
+
+	return
 }
