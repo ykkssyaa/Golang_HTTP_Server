@@ -39,7 +39,7 @@ func main() {
 
 	srv := server.NewHttpServer(services, logger, ":"+port)
 
-	logger.Info.Print("Starting the server on port: " + port)
+	logger.Info.Print("Starting the server on port: " + port + "\n\n")
 
 	logger.Err.Fatalf(srv.ListenAndServe().Error())
 

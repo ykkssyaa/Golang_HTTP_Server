@@ -15,7 +15,7 @@ type HttpServer struct {
 
 func NewHttpServer(services *service.Services, logger logger2.Logger, addr string) *http.Server {
 
-	server := &HttpServer{services: services}
+	server := &HttpServer{services: services, logger: logger}
 
 	r := mux.NewRouter()
 	r.HandleFunc("/api/user", server.GetUsers).Methods("GET")
