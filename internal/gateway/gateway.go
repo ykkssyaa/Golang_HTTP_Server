@@ -1,6 +1,10 @@
 package gateway
 
-import "github.com/jmoiron/sqlx"
+import (
+	"github.com/jmoiron/sqlx"
+	"net/http"
+	"time"
+)
 
 type Gateways struct {
 	UserGateway       PostgresUserGateway
@@ -10,6 +14,6 @@ type Gateways struct {
 func NewGateway(db *sqlx.DB) *Gateways {
 	return &Gateways{
 		UserGateway:       PostgresUserGatewayImpl{db: db},
-		UserThirdPartyApi: UserThirdPartyApiImpl{},
+		UserThirdPartyApi: UserThirdPartyApiImpl{client: &http.Client{Timeout: 30 * time.Second}},
 	}
 }

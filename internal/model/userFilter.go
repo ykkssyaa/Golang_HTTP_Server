@@ -6,5 +6,5 @@ type UserFilter struct {
 	Surname    *string
 	Patronymic *string
 	Age        *int
-	Gender     *gender
+	Gender     *Gender
 }

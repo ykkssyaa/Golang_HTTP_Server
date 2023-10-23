@@ -9,8 +9,6 @@ import (
 
 func (h *HttpServer) CreateUser(w http.ResponseWriter, r *http.Request) {
 
-	w.Write([]byte("CreateUser"))
-
 	if r.Header.Get("Content-Type") != "application/json" {
 		errorResponse(w, "Content Type is not application/json", http.StatusUnsupportedMediaType)
 		return
@@ -41,13 +39,13 @@ func (h *HttpServer) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *HttpServer) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("DeleteUser"))
+
 }
 
 func (h *HttpServer) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("UpdateUser"))
+
 }
 
 func (h *HttpServer) GetUsers(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("GetUsers"))
+
 }
